@@ -34,6 +34,16 @@ def avoid_repeated(bookpath, copynumber=1):
 
     return bookpath
 
+def download(bookpath, retried=False):
+    try:
+        urllib.request.urlretrieve(url, bookpath)
+    except urllib.error.ContentTooShortError as e:
+        if retried:
+            print('Re-trying to download...')
+            download(bookpath, True)
+        else:
+            print('Failed: %s' % str(e))
+
 
 cur_local_path = None
 
@@ -56,5 +66,5 @@ for child in readmeChildren.items():
 
             bookpath = avoid_repeated(bookpath)
 
-            print('book: %s\npath: %s\n' % (bookname, bookpath))
-            urllib.request.urlretrieve(url, bookpath)
+            print('\nbook: %s\npath: %s' % (bookname, bookpath))
+            download(bookpath)
